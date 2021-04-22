@@ -3,6 +3,7 @@ namespace EntityFrameworkCore.FSharp.Migrations.Design
 open System
 open System.Collections.Generic
 
+open EntityFrameworkCore.FSharp
 open EntityFrameworkCore.FSharp.SharedTypeExtensions
 open EntityFrameworkCore.FSharp.EntityFrameworkExtensions
 open EntityFrameworkCore.FSharp.IndentedStringBuilderUtilities
@@ -36,19 +37,25 @@ type FSharpSnapshotGenerator (code : ICSharpHelper,
 
     let findValueConverter (p:IProperty) =
         let pValueConverter = p.GetValueConverter()
-        if p.GetValueConverter() |> isNull then
-            let typeMapping = p.FindTypeMapping()
 
-            if typeMapping |> isNull then
-                let mapping = mappingSource.FindMapping(p)
-                if mapping |> isNull then
+        let converter =
+            if notNull pValueConverter then
+                Some pValueConverter
+            else
+                let typeMapping = p.FindTypeMapping()
+
+                if isNull typeMapping then
+                    let mapping = mappingSource.FindMapping(p)
+                    if isNull mapping then
+                        None
+                    elif isNull mapping.Converter then
+                        None
+                    else
+                        Some mapping.Converter
+                elif isNull typeMapping.Converter then
                     None
-                elif mapping.Converter |> isNull then
-                    None
-                else mapping.Converter |> Some
-            elif typeMapping.Converter |> isNull then None
-            else typeMapping.Converter |> Some
-        else pValueConverter |> Some
+                else Some typeMapping.Converter
+        converter
 
     let sort (entityTypes:IEntityType seq) =
         let entityTypeGraph = Multigraph()
@@ -201,12 +208,8 @@ type FSharpSnapshotGenerator (code : ICSharpHelper,
     let generateProperty (funcId:string) (p:IProperty) (sb:IndentedStringBuilder) =
 
         let isPropertyRequired =
-            let isNullable =
-                not (p.IsPrimaryKey()) ||
-                isOptionType p.ClrType ||
-                isNullableType p.ClrType
-
-            isNullable <> p.IsNullable
+            (p.IsPrimaryKey()) ||
+            not (isOptionType p.ClrType || isNullableType p.ClrType)
 
         let converter = findValueConverter p
         let clrType =

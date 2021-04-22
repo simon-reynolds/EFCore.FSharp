@@ -49,6 +49,14 @@ type FSharpEntityTypeGenerator(annotationCodeGenerator : IAnnotationCodeGenerato
         }
         |> dict
 
+    let fixOptionStoreType (p : IProperty) =
+        let prop = (p :?> Property)
+        let underlyingType = SharedTypeExtensions.unwrapOptionType p.ClrType
+
+
+
+        prop.SetColumnType("")
+
     let writeProperty name typeName func sb =
         sb
         |> appendLine (sprintf "[<DefaultValue>] val mutable private _%s : %s" name typeName)

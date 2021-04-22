@@ -35,7 +35,7 @@ type TestDbContext =
     override this.OnModelCreating(modelBuilder: ModelBuilder) =
         base.OnModelCreating(modelBuilder)
 
-        modelBuilder.RegisterOptionTypes()
+        //modelBuilder.RegisterOptionTypes()
 """
 
 [<Tests>]

@@ -673,6 +673,7 @@ type MyMigration() =
         modelBuilder.Entity("T1", (fun b ->
 
             b.Property<int>("Id")
+                .IsRequired()
                 .HasColumnType("int") |> ignore
             b.Property<string>("C2")
                 .IsRequired()
@@ -785,8 +786,10 @@ type MySnapshot() =
         modelBuilder.Entity(\"Cheese\", (fun b ->
 
             b.Property<string>(\"Ham\")
+                .IsRequired()
                 .HasColumnType(\"just_string(10)\") |> ignore
             b.Property<string>(\"Pickle\")
+                .IsRequired()
                 .HasColumnType(\"just_string(10)\") |> ignore
 
             b.HasKey(\"Ham\") |> ignore
@@ -798,6 +801,7 @@ type MySnapshot() =
         modelBuilder.Entity(\"EntityFrameworkCore.FSharp.Test.Migrations.Design.FSharpMigrationsGeneratorTest+EntityWithConstructorBinding\", (fun b ->
 
             b.Property<int>(\"Id\")
+                .IsRequired()
                 .ValueGeneratedOnAdd()
                 .HasColumnType(\"default_int_mapping\") |> ignore
             b.Property<Guid>(\"PropertyWithValueGenerator\")

@@ -8,6 +8,8 @@ open Microsoft.EntityFrameworkCore.Design
 
 open EntityFrameworkCore.FSharp.SharedTypeExtensions
 open EntityFrameworkCore.FSharp.IndentedStringBuilderUtilities
+open Microsoft.FSharp.Linq.RuntimeHelpers
+open System.Linq.Expressions
 
 module FSharpUtilities =
 
@@ -263,3 +265,8 @@ module FSharpUtilities =
             |> join ", "
 
         sprintf ".%s(%s)" methodCallCodeFragment.Method parameters
+
+    let convertFunToExpr (x : 'a -> 'b) =
+        <@ Func<'a, 'b>(x) @>
+        |> LeafExpressionConverter.QuotationToExpression
+        |> unbox<Expression<Func<'a, 'b>>>

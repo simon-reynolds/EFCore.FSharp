@@ -592,7 +592,7 @@ type FSharpDbContextGenerator
 
         sb
         |> appendEmptyLine
-        |> appendLine "modelBuilder.RegisterOptionTypes()"
+        |> appendLine "//modelBuilder.RegisterOptionTypes()"
         |> unindent
 
     let generateClass model
